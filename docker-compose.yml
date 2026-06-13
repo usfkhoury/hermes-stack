@@ -1,0 +1,50 @@
+networks:
+  hermes-net:
+    driver: bridge
+
+volumes:
+  hermes-data:
+  claude-auth:
+  repos-data:
+
+services:
+  hermes-gateway:
+    image: nousresearch/hermes-agent:latest
+    container_name: hermes-gateway
+    command: gateway run
+    restart: unless-stopped
+    networks:
+      - hermes-net
+    volumes:
+      - hermes-data:/opt/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      HERMES_UID: "10000"
+      HERMES_GID: "10000"
+
+  hermes-dashboard:
+    image: nousresearch/hermes-agent:latest
+    container_name: hermes-dashboard
+    command: dashboard --host 127.0.0.1 --no-open --insecure
+    restart: unless-stopped
+    depends_on:
+      - hermes-gateway
+    networks:
+      - hermes-net
+    ports:
+      - "127.0.0.1:9119:9119"
+    volumes:
+      - hermes-data:/opt/data
+    environment:
+      HERMES_UID: "10000"
+      HERMES_GID: "10000"
+
+  claude-worker:
+    build: ./claude
+    container_name: claude-worker
+    restart: unless-stopped
+    networks:
+      - hermes-net
+    volumes:
+      - claude-auth:/root/.claude
+      - ${REPOS_MOUNT:-repos-data}:/repos
