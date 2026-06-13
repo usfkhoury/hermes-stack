@@ -21,8 +21,8 @@ services:
     environment:
       HERMES_UID: "10000"
       HERMES_GID: "10000"
+      REPOS_MOUNT: ${REPOS_MOUNT:-hermes-stack_repos-data}
       TERMINAL_DOCKER_IMAGE: "hermes-stack-claude-worker"
-      TERMINAL_DOCKER_VOLUMES: "hermes-stack_claude-auth:/root/.claude,${REPOS_MOUNT:-hermes-stack_repos-data}:/repos"
 
   hermes-dashboard:
     image: nousresearch/hermes-agent:latest
