@@ -26,7 +26,7 @@ git clone https://github.com/usfkhoury/hermes-stack
 cd hermes-stack
 cp .env.example .env
 # Edit .env — set REPOS_MOUNT to the absolute path of your repos folder:
-#   REPOS_MOUNT=/mnt/c/Users/Youssef EL KHOURY/OneDrive/Documents/Git
+#   REPOS_MOUNT=/path/to/your/repos
 docker compose up -d
 ```
 
@@ -61,7 +61,7 @@ docker compose up -d
 
 Populate the repos volume after startup:
 ```bash
-docker exec claude-worker git clone <repo-url> /repos/<repo-name>
+docker exec claude-worker git clone https://github.com/user/my-project /repos/my-project
 # Repeat for each repo
 ```
 
