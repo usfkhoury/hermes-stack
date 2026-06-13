@@ -9,4 +9,7 @@ RUN npm install -g @anthropic-ai/claude-code
 
 WORKDIR /repos
 
-CMD ["tail", "-f", "/dev/null"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

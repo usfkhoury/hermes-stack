@@ -52,3 +52,5 @@ services:
     volumes:
       - claude-auth:/root/.claude
       - ${REPOS_MOUNT:-repos-data}:/repos
+    environment:
+      CLAUDE_MODEL: ${CLAUDE_MODEL:-claude-sonnet-4-6}
