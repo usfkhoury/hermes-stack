@@ -24,8 +24,10 @@ Hermes delegates coding tasks to Claude Code by spawning fresh containers from t
 git clone https://github.com/usfkhoury/hermes-stack
 cd hermes-stack
 cp .env.example .env
-# Edit .env — set REPOS_MOUNT to the absolute path of your repos folder:
-#   REPOS_MOUNT=/path/to/your/repos
+# Edit .env:
+#   REPOS_MOUNT  — absolute path of your repos folder, e.g. /path/to/your/repos
+#   CLAUDE_MODEL — (optional) Claude Code model the worker uses; leave empty for
+#                  the default claude-sonnet-4-6 (aliases: sonnet, opus, haiku, fable)
 docker compose build claude-worker
 docker compose up -d
 ```
