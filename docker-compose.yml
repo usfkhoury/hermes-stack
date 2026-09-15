@@ -1,6 +1,5 @@
 volumes:
   hermes-data:
-  repos-data:
 
 services:
   hermes:
@@ -13,7 +12,10 @@ services:
       - "127.0.0.1:9119:9119"
     volumes:
       - hermes-data:/opt/data
-      - ${REPOS_MOUNT:-repos-data}:/repos
+      # Defaults to the folder containing this repo. Relative paths are
+      # resolved by Compose against this file's directory, so this works
+      # unchanged from Windows, WSL, Linux and Mac shells alike.
+      - ${REPOS_MOUNT:-..}:/repos
     environment:
       HERMES_UID: "10000"
       HERMES_GID: "10000"

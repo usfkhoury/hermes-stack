@@ -11,16 +11,18 @@ Claude Pro/Max subscription. One container, one compose file.
 
 ## Setup
 
+Clone it alongside your other repos — the folder it lands in becomes `/repos`
+inside the container, so there is nothing to configure:
+
 ```bash
+cd ~/your/repos/folder
 git clone https://github.com/usfkhoury/hermes-stack
 cd hermes-stack
-cp .env.example .env
-# Edit .env: REPOS_MOUNT = absolute path of your repos folder, in the form
-# matching the shell you run compose from — C:/Users/... from Windows,
-# /mnt/c/Users/... from WSL. Leave it empty to use the named repos-data
-# volume instead (cloud deploys).
 docker compose up -d
 ```
+
+If your repos live somewhere else, set `REPOS_MOUNT` in a `.env` file
+(`cp .env.example .env`). Otherwise you don't need one.
 
 Then, once:
 
@@ -43,21 +45,19 @@ down / up`.
 
 ## Cloud deploy
 
-Same steps, but leave `REPOS_MOUNT` empty so repos live in the `repos-data`
-volume, and clone into it after startup:
+Identical — clone `hermes-stack` into the folder that holds your repos and
+`docker compose up -d`. To add repos later, clone them as siblings:
 
 ```bash
-docker exec hermes git clone https://github.com/user/my-project /repos/my-project
+git clone https://github.com/user/my-project ../my-project
 ```
 
 ## Volumes
 
-| Volume | Contents | Safe to `down -v`? |
-|---|---|---|
-| `hermes-data` | Hermes config, Claude credentials, memory, skills | No — wipes config and forces re-login |
-| `repos-data` | Repos (only when `REPOS_MOUNT` is empty) | No — wipes cloned repos |
+One volume: `hermes-data`, holding Hermes's config, Claude credentials,
+memory and skills. `docker compose down` keeps it, so restarts are safe.
 
-`docker compose down` on its own keeps both, so restarts are safe.
+Your repos are a bind mount, not a volume — nothing here can delete them.
 
 ## Updating
 
@@ -76,8 +76,7 @@ docker compose down -v
 docker compose up -d
 ```
 
-Then run the three setup commands again. Repos are untouched when
-`REPOS_MOUNT` points at a host folder; they live outside the volumes.
+Then run the three setup commands again. Your repos are untouched.
 
 ## Notes
 
