@@ -57,14 +57,27 @@ docker exec hermes git clone https://github.com/user/my-project /repos/my-projec
 | `hermes-data` | Hermes config, Claude credentials, memory, skills | No — wipes config and forces re-login |
 | `repos-data` | Repos (only when `REPOS_MOUNT` is empty) | No — wipes cloned repos |
 
-> **Warning:** `docker compose down -v` deletes both. Use it only to fully
-> reset the stack.
+`docker compose down` on its own keeps both, so restarts are safe.
 
 ## Updating
 
 ```bash
 docker compose pull && docker compose up -d
 ```
+
+## Reset to a clean slate
+
+Wipes Hermes's config, memory, and every stored credential — the Claude
+subscription login, any API keys, any messaging tokens. Not reversible, so
+copy anything you still want out of the volume first.
+
+```bash
+docker compose down -v
+docker compose up -d
+```
+
+Then run the three setup commands again. Repos are untouched when
+`REPOS_MOUNT` points at a host folder; they live outside the volumes.
 
 ## Notes
 
