@@ -1,56 +1,25 @@
-networks:
-  hermes-net:
-    driver: bridge
-
 volumes:
   hermes-data:
-  claude-auth:
   repos-data:
 
 services:
-  hermes-gateway:
+  hermes:
     image: nousresearch/hermes-agent:latest
-    container_name: hermes-gateway
+    container_name: hermes
     command: gateway run
     restart: unless-stopped
-    networks:
-      - hermes-net
-    volumes:
-      - hermes-data:/opt/data
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      HERMES_UID: "10000"
-      HERMES_GID: "10000"
-      REPOS_MOUNT: ${REPOS_MOUNT:-hermes-stack_repos-data}
-      TERMINAL_ENV: "docker"
-      TERMINAL_DOCKER_IMAGE: "hermes-stack-claude-worker"
-      TERMINAL_DOCKER_VOLUMES: '["hermes-stack_claude-auth:/root/.claude","${REPOS_MOUNT:-hermes-stack_repos-data}:/repos"]'
-
-  hermes-dashboard:
-    image: nousresearch/hermes-agent:latest
-    container_name: hermes-dashboard
-    command: dashboard --host 127.0.0.1 --no-open --insecure
-    restart: unless-stopped
-    depends_on:
-      - hermes-gateway
-    networks:
-      - hermes-net
     ports:
+      # Dashboard, reachable from this machine only.
       - "127.0.0.1:9119:9119"
     volumes:
       - hermes-data:/opt/data
+      - ${REPOS_MOUNT:-repos-data}:/repos
     environment:
       HERMES_UID: "10000"
       HERMES_GID: "10000"
-
-  claude-worker:
-    build: ./claude
-    container_name: claude-worker
-    restart: unless-stopped
-    networks:
-      - hermes-net
-    volumes:
-      - claude-auth:/root/.claude
-      - ${REPOS_MOUNT:-repos-data}:/repos
-    environment:
-      CLAUDE_MODEL: ${CLAUDE_MODEL:-claude-sonnet-4-6}
+      # Run the dashboard inside this container (supervised by s6).
+      HERMES_DASHBOARD: "1"
+      # Required because the dashboard binds 0.0.0.0 inside the container so
+      # Docker can forward to it. The published port above is bound to
+      # 127.0.0.1, so it is not exposed to the network.
+      HERMES_DASHBOARD_INSECURE: "1"
