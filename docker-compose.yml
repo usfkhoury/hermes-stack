@@ -21,7 +21,9 @@ services:
       HERMES_GID: "10000"
       # Run the dashboard inside this container (supervised by s6).
       HERMES_DASHBOARD: "1"
-      # Required because the dashboard binds 0.0.0.0 inside the container so
-      # Docker can forward to it. The published port above is bound to
-      # 127.0.0.1, so it is not exposed to the network.
-      HERMES_DASHBOARD_INSECURE: "1"
+      # The dashboard binds 0.0.0.0 inside the container so Docker can forward
+      # to it, and any non-loopback bind requires an auth provider. Set
+      # DASHBOARD_PASSWORD in .env; without it the dashboard refuses to start
+      # (the gateway still runs fine).
+      HERMES_DASHBOARD_BASIC_AUTH_USERNAME: ${DASHBOARD_USER:-hermes}
+      HERMES_DASHBOARD_BASIC_AUTH_PASSWORD: ${DASHBOARD_PASSWORD:-}
