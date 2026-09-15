@@ -43,6 +43,29 @@ Dashboard: http://localhost:9119
 Everything persists in the `hermes-data` volume across `docker compose
 down / up`.
 
+## Hermes desktop app
+
+The desktop app treats this container as a remote gateway — the same 9119 web
+server the dashboard uses. In the app: **Settings → Gateways** (`Ctrl+,`), add
+
+| Field | Value |
+|---|---|
+| Gateway URL | `http://localhost:9119` |
+| Sign in | the `DASHBOARD_USER` / `DASHBOARD_PASSWORD` from `.env` |
+
+The app probes both an HTTP and a WebSocket leg; a "Reachable" toast means
+chat will actually work. If it connects but a session won't open, something is
+blocking `/api/ws`.
+
+`DASHBOARD_SECRET` is what keeps you signed in — without a stable value the
+signing key is regenerated on every start and each restart logs the app out.
+
+To connect the desktop app from **another machine**, publish the port beyond
+loopback by changing the `ports` entry to `"9119:9119"`. Only do that on a
+trusted LAN or a VPN such as Tailscale — username/password is not meant for
+direct public-internet exposure. For a public host, use OAuth instead
+(`hermes dashboard register`).
+
 ## Cloud deploy
 
 Identical — clone `hermes-stack` into the folder that holds your repos and

@@ -27,3 +27,6 @@ services:
       # (the gateway still runs fine).
       HERMES_DASHBOARD_BASIC_AUTH_USERNAME: ${DASHBOARD_USER:-hermes}
       HERMES_DASHBOARD_BASIC_AUTH_PASSWORD: ${DASHBOARD_PASSWORD:-}
+      # Signs dashboard session cookies. Keep it stable, or every restart logs
+      # out the browser and the Hermes desktop app.
+      HERMES_DASHBOARD_BASIC_AUTH_SECRET: ${DASHBOARD_SECRET:-}
